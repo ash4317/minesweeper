@@ -29,7 +29,8 @@ def generateMines(size):
     return mineCoords
 
 def revealBlankCells(grid, clicked):
-    """When a blank cell is clicked, reveal the sequence of cells near this cell which are empty or a number"""
+    """When a blank cell is clicked, reveal the sequence of cells near this cell which are empty or a number.
+       This function uses 'Swarm searching' which keeps on searching for the goal in all the 8 directions."""
     frontier = list()   #Stack frontier
     visited = set()     #Visited set to keep a record of visited cells
     frontier.append(clicked)
