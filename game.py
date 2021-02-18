@@ -86,16 +86,27 @@ def revealCell(cursor, side, grid):
 
 if __name__ == "__main__":
     visited = set()
+
+    #gridSize: Size of the grid (no. of rows), side: length of cell side
     gridSize = 20   #Square grid 
     side = screen_height/gridSize - 1   #-1 is done to account for the spacing between adjacent cells
     grid = generateGrid(gridSize)
     while run:
+
+        #Loop through the events
         for event in pygame.event.get():
+
+            #if pygame window is closed
             if event.type == pygame.QUIT:
                 run = False
+            
+            #if mouse is clicked
             if event.type == pygame.MOUSEBUTTONDOWN:
-                revealCell(pygame.mouse.get_pos(), side, grid)
-        drawGrid(gridSize, side)
+                if pygame.mouse.get_pressed() == (True, False, False):
+                    revealCell(pygame.mouse.get_pos(), side, grid)
+
+        drawGrid(gridSize, side)    #Draw the grid
         pygame.display.update()
 
+    print("Thank you for playing!")
     pygame.quit()
