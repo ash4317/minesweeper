@@ -2,31 +2,23 @@ import sys, pygame
 pygame.init()
 
 screen_info = pygame.display.Info()
-screen_width, screen_height = screen_info.current_w - 200, screen_info.current_h - 100
+screen_width, screen_height = 1200, 880 #880x880 is the grid dimension. 880 is a common multiple of the different grid size 8, 16, 20
 screen = pygame.display.set_mode(size=(screen_width, screen_height))
 
-gridWidth = screen_width - 500
-gridRows, gridCols = 8, 8
+gridWidth = 880
+gridRows, gridCols = 16, 16
 
-gray = (153, 153, 153)
 white = (255, 255, 255)
 run = True
 
-def getInitialPosition(rows, cols, height, width):
-    """Sets the top-left corner position of the grid"""
-    extraSpaceVertical, extraSpaceHorizontal = screen_height % rows, screen_width % cols
-    return (int(extraSpaceHorizontal/2), int(extraSpaceVertical/2))
-
-
 def drawGrid(rows, cols, height, width, color):
     """Draws the grid"""
-    initialPosition = getInitialPosition(rows, cols, height, width) #get the top-left position of the grid
-    left, top = initialPosition[0], initialPosition[1]
+    left, top = 0, 0
 
     for i in range(rows):
-        top = (i * height) + (1 * i)    #space of 1px between adjacent blocks
+        top = (i * height) + (1 * i)    #space of 1px between adjacent cells
         for j in range(cols):
-            left = (j * width) + (1 * j)    #space of 1px between adjacent blocks
+            left = (j * width) + (1 * j)    #space of 1px between adjacent cells
             pygame.draw.rect(screen, color, pygame.Rect(left, top, width, height))
 
 
@@ -35,8 +27,8 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-        height, width = int((screen_height - 7)/8), int((screen_width - 7 - 500)/8)
-        drawGrid(gridRows, gridCols, height, width, gray)
+        height, width = screen_height/gridRows - 1, gridWidth/gridCols - 1  #-1 is done to account for the spacing between adjacent cells
+        drawGrid(gridRows, gridCols, height, width, white)
         pygame.display.update()
 
     pygame.quit()
