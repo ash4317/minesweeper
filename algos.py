@@ -21,10 +21,10 @@ def generateNumbers(grid, mineCoords):
                     continue
     return grid
 
-def generateMines(side):
+def generateMines(size):
     """Generate mines and locate them randomly on the grid"""
-    nos = sample(range(0, side ** 2), ceil((side ** 2)/5))  #No. of mines = 20% of the cells
-    mineCoords = [(int(i/side), i%side) for i in nos]
+    nos = sample(range(0, size ** 2), ceil((size ** 2)/5))  #No. of mines = 20% of the cells
+    mineCoords = [(int(i/size), i%size) for i in nos]
     #print(mineCoords)
     return mineCoords
 
@@ -53,6 +53,16 @@ def revealBlankCells(grid, clicked):
                     else:
                         visited.add((i, j))
     return visited
+
+def generateGrid(size):
+    grid = list()
+    for i in range(size):
+        grid.append(list())
+        for j in range(size):
+            grid[i].append(0)
+    grid = generateNumbers(grid, generateMines(size))
+    return grid
+
 
 def test():
     """Test case"""
