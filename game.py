@@ -13,6 +13,7 @@ mines = 0
 
 #Colors
 white = (255, 255, 255)
+whitesmoke = (220, 220, 220)
 gray = (110, 110, 110)
 black = (0, 0, 0)
 lightGreen = (164, 238, 164)
@@ -33,7 +34,9 @@ def getCoords(cursor, side):
 
 def setColor(val):
     """Return color corresponding to cell value"""
-    if val == 1:
+    if val == 0:
+        return whitesmoke
+    elif val == 1:
         return lightGreen
     elif val == 2:
         return lightYellow
@@ -63,12 +66,14 @@ def drawGrid(size, side):
             if (i, j) in visited:
                 color = setColor(grid[i][j])    #Get color of the cell
                 pygame.draw.rect(screen, color, pygame.Rect(left, top, side, side))
-                font = pygame.font.SysFont('Comic Sans MS', 30) #set font
-                text = font.render(str(grid[i][j]), True, black)
-                textRect = text.get_rect()
-                cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
-                textRect.center = cellCenter
-                screen.blit(text, textRect) #Display the text surface
+                #if cell != 0, display the number
+                if grid[i][j] != 0:
+                    font = pygame.font.SysFont('Comic Sans MS', 30) #set font
+                    text = font.render(str(grid[i][j]), True, black)
+                    textRect = text.get_rect()
+                    cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
+                    textRect.center = cellCenter
+                    screen.blit(text, textRect) #Display the text surface
 
             #if cell is flagged
             elif (i, j) in flagged:
