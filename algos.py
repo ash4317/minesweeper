@@ -1,6 +1,12 @@
 from random import sample
 from math import ceil
 
+def printGrid(grid):
+    for i in range(len(grid)):
+        for j in range(len(grid)):
+            print(grid[i][j], end=" ")
+        print("\n")
+
 def generateNumbers(grid, mineCoords):
     """Fill those cells which have mines surrounding them.
        Fill it with a number indicating no. of mines surrounding it."""
@@ -8,17 +14,18 @@ def generateNumbers(grid, mineCoords):
     #Loop through all mine locations
     for mine in mineCoords:
         #Add 1 to all the 8 surrounding cells of the mine
+        #print(f"Mine: {mine}")
         for i in range(mine[0]-1, mine[0]+2):
             for j in range(mine[1]-1, mine[1]+2):
-                if (i, j) == mine:
-                    grid[i][j] = -1
-                    continue
-                #if the array position is valid, then increment by 1. Else, continue
-                try:
+                if i in range(0, len(grid)) and j in range(0, len(grid)):
+                    if (i, j) == mine:
+                        grid[i][j] = -1
+                        continue
+                #if the cell is not a mine, increment by 1
                     if grid[i][j] != -1:
                         grid[i][j] += 1
-                except:
-                    continue
+        #printGrid(grid)
+    #print("Final:")
     return grid
 
 def generateMines(size):
@@ -68,13 +75,10 @@ def generateGrid(size):
 def test():
     """Test case"""
     grid = list()
-    for i in range(16):
+    for i in range(8):
         grid.append(list())
-        for j in range(16):
+        for j in range(8):
             grid[i].append(0)
-    grid = generateNumbers(grid, generateMines(16))
-    for i in range(len(grid)):
-        for j in range(len(grid)):
-            print(grid[i][j], end=" ")
-        print("\n")
+    grid = generateNumbers(grid, generateMines(8))
+    #printGrid(grid)
     return grid
