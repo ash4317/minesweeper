@@ -30,6 +30,8 @@ flagged = set()
 
 def getCoords(cursor, side):
     """Returns the cell number of the clicked cell"""
+    if cursor[0] >= gridWidth:
+    	return (-1, -1)
     return (int(cursor[1]/(side+1)), int(cursor[0]/(side+1)))
 
 def setColor(val):
@@ -119,7 +121,7 @@ def drawMenu(noOfFlagged):
 if __name__ == "__main__":
 
     #gridSize: Size of the grid (no. of rows), side: length of cell side
-    gridSize = 8   #Square grid 
+    gridSize = 20   #Square grid 
     side = screen_height/gridSize - 1   #-1 is done to account for the spacing between adjacent cells
     mines = ceil((gridSize ** 2)/5)
 
