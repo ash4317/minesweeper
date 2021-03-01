@@ -63,7 +63,7 @@ def drawGrid(size, side):
         top = (i * side) + (1 * i)    #space of 1px between adjacent cells
         for j in range(size):
             left = (j * side) + (1 * j)    #space of 1px between adjacent cells
-            
+
             #if cell is visited
             if (i, j) in visited:
                 color = setColor(grid[i][j])    #Get color of the cell
@@ -79,12 +79,10 @@ def drawGrid(size, side):
 
             #if cell is flagged
             elif (i, j) in flagged:
-                font = pygame.font.SysFont('Comic Sans MS', 30) #set font
-                text = font.render('F', True, black)
-                textRect = text.get_rect()
-                cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
-                textRect.center = cellCenter
-                screen.blit(text, textRect) #Display the text surface
+                flag = pygame.image.load("images/flag.png").convert()  #load the image
+                flag = pygame.transform.scale(flag, (side, side))   #change size of image = cell width
+                img_coords = (j * (side+1), i * (side+1))   #coords of top-left corner of cell
+                screen.blit(flag, img_coords)   #display the image at the specified coords
 
             #if cell is not visited
             else:
@@ -121,8 +119,8 @@ def drawMenu(noOfFlagged):
 if __name__ == "__main__":
 
     #gridSize: Size of the grid (no. of rows), side: length of cell side
-    gridSize = 20   #Square grid 
-    side = screen_height/gridSize - 1   #-1 is done to account for the spacing between adjacent cells
+    gridSize = 20   #Square grid
+    side = int(screen_height/gridSize - 1)   #-1 is done to account for the spacing between adjacent cells
     mines = ceil((gridSize ** 2)/5)
 
     grid = generateGrid(gridSize)
@@ -134,7 +132,7 @@ if __name__ == "__main__":
             #if pygame window is closed
             if event.type == pygame.QUIT:
                 run = False
-            
+
             #if mouse is clicked
             if event.type == pygame.MOUSEBUTTONDOWN:
                 #if left mouse button is clicked
