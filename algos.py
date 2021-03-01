@@ -68,8 +68,9 @@ def generateGrid(size):
         grid.append(list())
         for j in range(size):
             grid[i].append(0)
-    grid = generateNumbers(grid, generateMines(size))
-    return grid
+    mines = generateMines(size)
+    grid = generateNumbers(grid, mines)
+    return grid, mines
 
 
 def test():
