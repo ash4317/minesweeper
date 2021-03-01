@@ -14,7 +14,6 @@ mines = 0
 #Colors
 white = (255, 255, 255)
 whitesmoke = (220, 220, 220)
-gray = (110, 110, 110)
 black = (0, 0, 0)
 lightGreen = (164, 238, 164)
 lightYellow = (255, 255, 174)
@@ -23,7 +22,7 @@ lightRed = (255, 120, 70)
 mediumRed = (255, 70, 20)
 red = (255, 10, 10)
 
-run = True
+run, gameOver = True, False
 
 visited = set()
 flagged = set()
@@ -50,8 +49,6 @@ def setColor(val):
         return mediumRed
     elif val == 6:
         return red
-    else:
-        return gray
 
 def drawGrid(size, side):
     """Draws the grid"""
@@ -66,16 +63,22 @@ def drawGrid(size, side):
 
             #if cell is visited
             if (i, j) in visited:
-                color = setColor(grid[i][j])    #Get color of the cell
-                pygame.draw.rect(screen, color, pygame.Rect(left, top, side, side))
-                #if cell != 0, display the number
-                if grid[i][j] != 0:
-                    font = pygame.font.SysFont('Comic Sans MS', 30) #set font
-                    text = font.render(str(grid[i][j]), True, black)
-                    textRect = text.get_rect()
-                    cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
-                    textRect.center = cellCenter
-                    screen.blit(text, textRect) #Display the text surface
+                if grid[i][j] != -1:
+                    color = setColor(grid[i][j])    #Get color of the cell
+                    pygame.draw.rect(screen, color, pygame.Rect(left, top, side, side))
+                    #if cell != 0, display the number
+                    if grid[i][j] != 0:
+                        font = pygame.font.SysFont('Comic Sans MS', 30) #set font
+                        text = font.render(str(grid[i][j]), True, black)
+                        textRect = text.get_rect()
+                        cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
+                        textRect.center = cellCenter
+                        screen.blit(text, textRect) #Display the text surface
+                else:
+                    mine = pygame.image.load("images/mine.jpeg").convert()   #load the image
+                    mine = pygame.transform.scale(mine, (side, side))   #change size of img = cell width
+                    img_coords = (j * (side+1), i * (side+1))   #coords of top-left corner of cell
+                    screen.blit(mine, img_coords)
 
             #if cell is flagged
             elif (i, j) in flagged:
@@ -88,75 +91,95 @@ def drawGrid(size, side):
             else:
                 pygame.draw.rect(screen, white, pygame.Rect(left, top, side, side))
 
-def revealCell(cursor, side, grid):
+
+def revealMines(visited, mineCoords):
+    global flagged
+    for mine in mineCoords:
+        if mine not in flagged:
+            visited.add(mine)
+
+
+def revealCell(cursor, side, grid, mineCoords):
     #left = cursor[0] - (cursor[0] % (width+1))
     #top = cursor[1] - (cursor[1] % (height+1))
     (i, j) = getCoords(cursor, side) #coordinates of the cell
-    global visited
+    global visited, flagged
 
     font = pygame.font.SysFont('dejavuserif', 30) #set font
 
     #if the cell is not flagged
     if (i, j) not in flagged:
-        if grid[i][j] == 0:
-            visited = visited.union(revealBlankCells(grid, (i, j)))
+        if grid[i][j] == -1:
+            revealMines(visited, mineCoords)
+            global gameOver
+            gameOver = True
+        else:
+            if grid[i][j] == 0:
+                visited = visited.union(revealBlankCells(grid, (i, j)))
 
-        text = font.render(str(grid[i][j]), True, black)
-        textRect = text.get_rect()
-        cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
-        textRect.center = cellCenter
-        screen.blit(text, textRect)
-        visited.add((i, j)) #add cell to visited
+            text = font.render(str(grid[i][j]), True, black)
+            textRect = text.get_rect()
+            cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
+            textRect.center = cellCenter
+            screen.blit(text, textRect)
+            visited.add((i, j)) #add cell to visited
 
-def drawMenu(noOfFlagged):
+def drawMenu(noOfFlagged, gameOver):
     pygame.draw.rect(screen, black, pygame.Rect(880, 0, screen_width-gridWidth, screen_height))
     font = pygame.font.SysFont('freesans', 30) #set font
     text = font.render("Flagged: " + str(noOfFlagged) + "/" + str(mines), True, white)
     textRect = text.get_rect()
     textRect.center = (1000, 400)
     screen.blit(text, textRect)
+    if gameOver:
+        font = pygame.font.SysFont('freesans', 30) #set font
+        text = font.render("GAME OVER", True, white)
+        textRect = text.get_rect()
+        textRect.center = (1000, 200)
+        screen.blit(text, textRect)
 
 if __name__ == "__main__":
 
     #gridSize: Size of the grid (no. of rows), side: length of cell side
-    gridSize = 20   #Square grid
+    gridSize = int(sys.argv[1])   #Square grid
     side = int(screen_height/gridSize - 1)   #-1 is done to account for the spacing between adjacent cells
     mines = ceil((gridSize ** 2)/5)
 
-    grid = generateGrid(gridSize)
+    grid, mineCoords = generateGrid(gridSize)
     while run:
 
         #Loop through the events
         for event in pygame.event.get():
 
-            #if pygame window is closed
+                #if pygame window is closed
             if event.type == pygame.QUIT:
                 run = False
 
-            #if mouse is clicked
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                #if left mouse button is clicked
-                if pygame.mouse.get_pressed() == (True, False, False):
-                    revealCell(pygame.mouse.get_pos(), side, grid)
-                #if right mouse button is clicked
-                elif pygame.mouse.get_pressed() == (False, False, True):
-                    cursor = pygame.mouse.get_pos()
-                    coords = getCoords(cursor, side)
+            if not gameOver:
+                #if mouse is clicked
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    #if left mouse button is clicked
+                    if pygame.mouse.get_pressed() == (True, False, False):
+                        revealCell(pygame.mouse.get_pos(), side, grid, mineCoords)
+                    #if right mouse button is clicked
+                    elif pygame.mouse.get_pressed() == (False, False, True):
+                        cursor = pygame.mouse.get_pos()
+                        coords = getCoords(cursor, side)
 
-                    #only update no of flagged if it is not visited
-                    if coords not in visited:
-                        #if not flagged, then flag it
-                        if coords not in flagged:
-                            if noOfFlagged < mines:
-                                flagged.add(coords)
-                                noOfFlagged += 1
-                        #if already flagged, unflag it
-                        else:
-                            flagged.remove(coords)
-                            noOfFlagged -= 1
+                        #only update no of flagged if it is not visited
+                        if coords not in visited:
+                            #if not flagged, then flag it
+                            if coords not in flagged:
+                                if noOfFlagged < mines:
+                                    flagged.add(coords)
+                                    noOfFlagged += 1
+                            #if already flagged, unflag it
+                            else:
+                                flagged.remove(coords)
+                                noOfFlagged -= 1
 
         drawGrid(gridSize, side)    #Draw the grid
-        drawMenu(noOfFlagged)
+        drawMenu(noOfFlagged, gameOver)
         pygame.display.update()
 
     print("Thank you for playing!")
