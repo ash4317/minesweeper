@@ -74,6 +74,7 @@ def drawGrid(size, side):
                         cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
                         textRect.center = cellCenter
                         screen.blit(text, textRect) #Display the text surface
+                #if cell is mine
                 else:
                     mine = pygame.image.load("images/mine.jpeg").convert()   #load the image
                     mine = pygame.transform.scale(mine, (side, side))   #change size of img = cell width
@@ -93,6 +94,7 @@ def drawGrid(size, side):
 
 
 def revealMines(visited, mineCoords):
+    """Displays all the mines on the grid"""
     global flagged
     for mine in mineCoords:
         if mine not in flagged:
@@ -100,6 +102,7 @@ def revealMines(visited, mineCoords):
 
 
 def revealCell(cursor, side, grid, mineCoords):
+    """Shows the cell when it is clicked"""
     #left = cursor[0] - (cursor[0] % (width+1))
     #top = cursor[1] - (cursor[1] % (height+1))
     (i, j) = getCoords(cursor, side) #coordinates of the cell
@@ -109,14 +112,18 @@ def revealCell(cursor, side, grid, mineCoords):
 
     #if the cell is not flagged
     if (i, j) not in flagged:
+
+        #if clicked cell is a mine, then game over and reveal all the mines
         if grid[i][j] == -1:
             revealMines(visited, mineCoords)
             global gameOver
             gameOver = True
         else:
+            #if clicked cell is a blank cell, then reveal blank cells surrounding it
             if grid[i][j] == 0:
                 visited = visited.union(revealBlankCells(grid, (i, j)))
 
+            #show the number denoted the no. of mines around the cell
             text = font.render(str(grid[i][j]), True, black)
             textRect = text.get_rect()
             cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
@@ -125,12 +132,15 @@ def revealCell(cursor, side, grid, mineCoords):
             visited.add((i, j)) #add cell to visited
 
 def drawMenu(noOfFlagged, gameOver):
+    """Draws the score, flagged etc."""
     pygame.draw.rect(screen, black, pygame.Rect(880, 0, screen_width-gridWidth, screen_height))
     font = pygame.font.SysFont('freesans', 30) #set font
     text = font.render("Flagged: " + str(noOfFlagged) + "/" + str(mines), True, white)
     textRect = text.get_rect()
     textRect.center = (1000, 400)
     screen.blit(text, textRect)
+
+    #if game over, show "GAME OVER"
     if gameOver:
         font = pygame.font.SysFont('freesans', 30) #set font
         text = font.render("GAME OVER", True, white)
