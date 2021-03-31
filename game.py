@@ -4,7 +4,7 @@ from math import ceil
 pygame.init()
 
 screen_info = pygame.display.Info()
-screen_width, screen_height = 1200, 880 #880x880 is the grid dimension. 880 is a common multiple of the different grid size 8, 16, 20
+screen_width, screen_height = 1200, 800 #880x880 is the grid dimension. 880 is a common multiple of the different grid size 8, 16, 20
 screen = pygame.display.set_mode(size=(screen_width, screen_height))
 
 gridWidth = 880
@@ -71,7 +71,7 @@ def drawGrid(size, side):
                         font = pygame.font.SysFont('Comic Sans MS', 30) #set font
                         text = font.render(str(grid[i][j]), True, black)
                         textRect = text.get_rect()
-                        cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
+                        cellCenter = (int(j * (side+1) + (side/2)), int(i * (side+1) + (side/2))) #set the cell center of the text surface
                         textRect.center = cellCenter
                         screen.blit(text, textRect) #Display the text surface
                 #if cell is mine
@@ -126,7 +126,7 @@ def revealCell(cursor, side, grid, mineCoords):
             #show the number denoted the no. of mines around the cell
             text = font.render(str(grid[i][j]), True, black)
             textRect = text.get_rect()
-            cellCenter = (j * (side+1) + (side/2), i * (side+1) + (side/2)) #set the cell center of the text surface
+            cellCenter = (int(j * (side+1) + (side/2)), int(i * (side+1) + (side/2))) #set the cell center of the text surface
             textRect.center = cellCenter
             screen.blit(text, textRect)
             visited.add((i, j)) #add cell to visited
