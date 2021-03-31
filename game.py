@@ -4,7 +4,7 @@ from math import ceil
 pygame.init()
 
 screen_info = pygame.display.Info()
-screen_width, screen_height = 1200, 800 #880x880 is the grid dimension. 880 is a common multiple of the different grid size 8, 16, 20
+screen_width, screen_height = 1200, 800 #800x800 is the grid dimension. 880 is a common multiple of the different grid size 8, 16, 20
 screen = pygame.display.set_mode(size=(screen_width, screen_height))
 
 gridWidth = 880
