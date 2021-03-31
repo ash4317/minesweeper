@@ -22,7 +22,7 @@ lightRed = (255, 120, 70)
 mediumRed = (255, 70, 20)
 red = (255, 10, 10)
 
-run, gameOver = True, False
+run, gameStatus = True, "ongoing"
 
 visited = set()
 flagged = set()
@@ -116,8 +116,8 @@ def revealCell(cursor, side, grid, mineCoords):
         #if clicked cell is a mine, then game over and reveal all the mines
         if grid[i][j] == -1:
             revealMines(visited, mineCoords)
-            global gameOver
-            gameOver = True
+            global gameStatus
+            gameStatus = "lost"
         else:
             #if clicked cell is a blank cell, then reveal blank cells surrounding it
             if grid[i][j] == 0:
@@ -131,7 +131,7 @@ def revealCell(cursor, side, grid, mineCoords):
             screen.blit(text, textRect)
             visited.add((i, j)) #add cell to visited
 
-def drawMenu(noOfFlagged, gameOver):
+def drawMenu(noOfFlagged, gameStatus):
     """Draws the score, flagged etc."""
     pygame.draw.rect(screen, black, pygame.Rect(880, 0, screen_width-gridWidth, screen_height))
     font = pygame.font.SysFont('freesans', 30) #set font
@@ -140,13 +140,33 @@ def drawMenu(noOfFlagged, gameOver):
     textRect.center = (1000, 400)
     screen.blit(text, textRect)
 
-    #if game over, show "GAME OVER"
-    if gameOver:
+    #if game over, show "GAME OVER", else "YOU WON!"
+    if gameStatus == "lost":
         font = pygame.font.SysFont('freesans', 30) #set font
         text = font.render("GAME OVER", True, white)
         textRect = text.get_rect()
         textRect.center = (1000, 200)
         screen.blit(text, textRect)
+    elif gameStatus == "won":
+        font = pygame.font.SysFont('freesans', 30) #set font
+        text = font.render("YOU WON!", True, white)
+        textRect = text.get_rect()
+        textRect.center = (1000, 200)
+        screen.blit(text, textRect)
+
+
+def gameIsWon(mineCoords, flagged, visited, gridSize, mines):
+    """Returns true if game is won. False if game is lost or is ongoing"""
+
+    for mine in mineCoords:
+        #check if every mine is flagged
+        if mine not in flagged:
+            return False
+    #if every mine is flagged and rest of the cells are visited, then game is won
+    if len(visited) != (gridSize ** 2) - mines:
+        return False
+    return True
+
 
 if __name__ == "__main__":
 
@@ -165,12 +185,15 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 run = False
 
-            if not gameOver:
+            if gameStatus == "ongoing":
                 #if mouse is clicked
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     #if left mouse button is clicked
                     if pygame.mouse.get_pressed() == (True, False, False):
                         revealCell(pygame.mouse.get_pos(), side, grid, mineCoords)
+                        if len(flagged) == mines:
+                            if gameIsWon(mineCoords, flagged, visited, gridSize, mines):
+                                gameStatus = "won"
                     #if right mouse button is clicked
                     elif pygame.mouse.get_pressed() == (False, False, True):
                         cursor = pygame.mouse.get_pos()
@@ -189,7 +212,7 @@ if __name__ == "__main__":
                                 noOfFlagged -= 1
 
         drawGrid(gridSize, side)    #Draw the grid
-        drawMenu(noOfFlagged, gameOver)
+        drawMenu(noOfFlagged, gameStatus)
         pygame.display.update()
 
     print("Thank you for playing!")
