@@ -30,7 +30,7 @@ def generateNumbers(grid, mineCoords):
 
 def generateMines(size):
     """Generate mines and locate them randomly on the grid"""
-    nos = sample(range(1, size ** 2), ceil((size ** 2)/5))  #No. of mines = 20% of the cells
+    nos = sample(range(1, size ** 2), ceil((size ** 2)/8))  #No. of mines = 20% of the cells
     mineCoords = [(int(i/size), i%size) for i in nos]
     #print(mineCoords)
     return mineCoords

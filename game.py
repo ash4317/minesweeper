@@ -173,7 +173,7 @@ if __name__ == "__main__":
     #gridSize: Size of the grid (no. of rows), side: length of cell side
     gridSize = int(sys.argv[1])   #Square grid
     side = int(screen_height/gridSize - 1)   #-1 is done to account for the spacing between adjacent cells
-    mines = ceil((gridSize ** 2)/5)
+    mines = ceil((gridSize ** 2)/8)
 
     grid, mineCoords = generateGrid(gridSize)
     while run:
