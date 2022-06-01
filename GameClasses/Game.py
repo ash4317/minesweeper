@@ -1,4 +1,4 @@
-from Grid import Grid
+from GameClasses.Grid import Grid
 
 class Game:
     """
@@ -21,18 +21,18 @@ class Game:
     def set_status(self, status:str):
         self.__status = status
     
-    def is_game_won(self, grid:Grid):
+    def is_game_won(self, grid:Grid) -> bool:
         """
         Returns true if game is won. False if game is lost or is ongoing.
         A game is won only if all cells that are not mines are visited AND all mines are flagged.
         """
         
         for mine_x, mine_y in grid.get_mine_coordinates():
-            #check if every mine is flagged
+            # Check if every mine is flagged
             if not grid.get_grid()[mine_x][mine_y].is_flagged():
                 return False
             
-        #if every mine is flagged and rest of the cells are visited, then game is won
+        # If every mine is flagged and rest of the cells are visited, then game is won
         if len(grid.get_visited_cells()) != (grid.get_grid_size() ** 2) - grid.get_no_of_mines():
             return False
         return True
