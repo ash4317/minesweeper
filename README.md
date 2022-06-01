@@ -5,7 +5,7 @@ My attempt on the traditional Minesweeper game using "Pygame" package in Python.
 Clone this repo wherever you want on your device. Make sure python is installed on your device.<br>
 Open command prompt (for Windows users), terminal (for Linux users) or shell (for iOS users) and enter this directory.<br><br>
 
-Then run the file "game.py" as follows -<br>
+Then run the file "main.py" as follows -<br>
 ```
 python3 game.py 20
 ```
